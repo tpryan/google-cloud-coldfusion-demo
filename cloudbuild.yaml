@@ -1,0 +1,17 @@
+steps:
+   - name: 'google/cloud-sdk:latest'
+     entrypoint: 'bash'
+     args: 
+     - '-c'
+     - |
+        "/opt/google-cloud-sdk/bin/gcloud compute scp $_SERVERNAME --recurse code $_SERVERNAME:~" 
+   - name: 'google/cloud-sdk:latest'
+     entrypoint: 'gcloud'
+     args: [ "compute", "ssh", $_SERVERNAME, "--zone", $_ZONE, "--command", "sudo cp -r code/todo /opt/ColdFusion2021/cfusion/wwwroot" ]
+   - name: 'google/cloud-sdk:latest'
+     entrypoint: 'gcloud'
+     args: [ "compute", "ssh", $_SERVERNAME, "--zone", $_ZONE, "--command", "sudo cp -r index.cfm /opt/ColdFusion2021/cfusion/wwwroot/" ]
+timeout: 2200s
+substitutions:
+  _SERVERNAME: todo
+  _ZONE: us-central1-a

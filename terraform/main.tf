@@ -37,6 +37,24 @@ resource "google_project_iam_member" "allbuild" {
 }
 
 
+data "google_iam_policy" "admin" {
+  binding {
+    role = "roles/iam.serviceAccountUser"
+
+    members = [
+      "serviceAccount:${local.sabuild}",
+    ]
+  }
+}
+
+
+resource "google_service_account_iam_policy" "admin-account-iam" {
+  service_account_id = "projects/${var.project_id}/serviceAccounts/${local.sacompute}"
+  policy_data        = data.google_iam_policy.admin.policy_data
+}
+
+
+
 
 
 data "google_project" "project" {
