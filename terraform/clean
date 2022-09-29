@@ -1,0 +1,58 @@
+CYAN='\033[0;36m'
+BCYAN='\033[1;36m'
+NC='\033[0m' # No Color
+DIVIDER=$(printf %"$(tput cols)"s | tr " " "*")
+DIVIDER+="\n"
+
+function get_project_id() {
+    local __resultvar=$1
+    VALUE=$(gcloud config get-value project | xargs)
+    eval $__resultvar="'$VALUE'"
+}
+
+function get_project_number() {
+    local __resultvar=$1
+    local PRO=$2
+    VALUE=$(gcloud projects list --filter="project_id=$PRO" --format="value(PROJECT_NUMBER)" | xargs)
+    eval $__resultvar="'$VALUE'"
+}
+
+# DISPLAY HELPERS
+function section_open() {
+    section_description=$1
+    printf "$DIVIDER"
+    printf "${CYAN}$section_description${NC} \n"
+    printf "$DIVIDER"
+}
+
+function section_close() {
+    printf "$DIVIDER"
+    printf "${CYAN}$section_description ${BCYAN}- done${NC}\n"
+    printf "\n\n"
+}
+
+section_open "Delete Firewall Rules"
+    gcloud compute firewall-rules delete coldfusion-private -q
+    gcloud compute firewall-rules delete coldfusion -q
+    gcloud compute firewall-rules delete allow-ssh-private -q
+section_close
+
+section_open "Delete Secrets"
+    gcloud secrets delete DB_HOST -q --no-user-output-enabled		
+    gcloud secrets delete DB_NAME -q --no-user-output-enabled		
+    gcloud secrets delete DB_PASS -q --no-user-output-enabled		
+    gcloud secrets delete DB_PORT -q --no-user-output-enabled		
+    gcloud secrets delete DB_USER -q --no-user-output-enabled
+section_close
+
+
+
+section_open "Delete SQL Server"
+    sql_servers_raw=$(gcloud sql instances list --format="value(name)")
+    read -r -a sql_servers <<< $(echo "$sql_servers_raw" | tr '\n' ' ')
+
+
+    for sql_name in "${sql_servers[@]}"; do
+    gcloud sql instances delete $sql_name -q 
+    done
+section_close

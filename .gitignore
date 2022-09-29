@@ -1,0 +1,5 @@
+
+.vscode/settings.json
+.terraform*
+terraform.tfstate*
+terraform/terraform.tfvars
