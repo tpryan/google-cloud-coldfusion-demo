@@ -13,59 +13,60 @@
 //  limitations under the License.
 component rest="true" restpass="api/todo"{
 
+    this.StatusOk = 200;
+    this.StatusCreated = 201;
+    this.StatusNoContent = 204;
+    this.StatusNotFound = 404;
+
+
     remote array function list() httpmethod="GET" produces = "application/json"{
-        result = EntityLoad("todo");
-        return result;
+        local.result = EntityLoad("todo");
+        return local.result;
     }
 
     remote  todo.cfc.bean.todo function get(numeric id restargsource = "path") httpmethod = "GET" produces="application/json" restpath= "{id}" {
-        var todo = entityLoadByPK("todo", id);
-        return todo;
+        local.todo = entityLoadByPK("todo", id);
+        return local.todo;
     }
 
      remote void function create(required todo.cfc.bean.todo input) httpmethod="POST" {
-        var todo = new todo.cfc.bean.todo();
-        todo.setTitle(input.title)
-        todo.setUpdated(Now());
+        local.todo = new todo.cfc.bean.todo();
+        local.todo.setTitle(input.title)
+        local.todo.setUpdated(Now());
         
-        entitySave(todo);
+        entitySave(local.todo);
         ormflush();
-        restSetResponse({status=201});
+        restSetResponse({status=this.StatusCreated});
         return
     }
 
     remote void function update(todo.cfc.bean.todo input, numeric id restargsource = "path") httpmethod = "PUT" restpath= "{id}" {
-        writeLog("v1: update received")
-        var todo = entityLoadByPK("todo", id);
-        todo.setTitle(input.title);
-        todo.setUpdated(Now());
+        local.todo = entityLoadByPK("todo", id);
+        local.todo.setTitle(input.title);
+        local.todo.setUpdated(Now());
         if (!isNull(input.completed)  && isBoolean(input.completed)){
             if (input.completed) {
-                writeLog("v1: set complete")
                 todo.setCompleted(Now());
             } else{
-                writeLog("v1: set incomplete")
                 todo.setCompleted(javaCast("null",""));
             }
-        } else{
-            writeLog("v1: don touch complete")
-        }
+        } 
 
-        restSetResponse({status=200});
-        entitySave(todo);
+        restSetResponse({status=StatusOk});
+        entitySave(local.todo);
         ormflush();
     }
 
      remote void function delete(numeric id restargsource = "path") httpmethod="DELETE" restpath= "{id}" {
 
-        var todo = entityLoadByPK("todo", id);
+        local.todo = entityLoadByPK("todo", id);
          if (!isNull(todo)){
-            entityDelete(todo);
+            entityDelete(local.todo);
             ormflush();
-            restSetResponse({status=204});
+            restSetResponse({status=this.StatusNoContent});
             return 
         }
-        restSetResponse({status=404});
+        restSetResponse({status=this.StatusNotFound});
         return 
     }
 }
