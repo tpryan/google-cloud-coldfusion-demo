@@ -20,6 +20,12 @@ RUN mvn dependency:get -Dartifact=com.google.cloud:google-cloud-secretmanager:2.
 RUN mkdir -p /app/jarfiles && cp -r /root/.m2 /app/jarfiles && rm -rf /root/.m2
 RUN git clone https://github.com/markmandel/JavaLoader /tmp/jl
 RUN cp -r /tmp/jl/javaloader /opt/coldfusion/cfusion/wwwroot
+RUN /opt/coldfusion/config/cfsetup/cfsetup.sh alias instance /opt/coldfusion/cfusion/
+RUN /opt/coldfusion/config/cfsetup/cfsetup.sh add mapping virtual=/javaloader physical=/opt/coldfusion/cfusion/wwwroot/javaloader/ instance
+RUN /opt/coldfusion/config/cfsetup/cfsetup.sh set debug enabled=true instance
+RUN /opt/coldfusion/config/cfsetup/cfsetup.sh set debug robust_enabled=true instance
+RUN /opt/coldfusion/config/cfsetup/cfsetup.sh set DEBUG iplist=172.17.0.1 instance
+RUN /opt/coldfusion/cfusion/bin/coldfusion restart
 COPY code/todo /app/todo
 COPY code/index.cfm /app/index.cfm
 ENV PORT 8500
