@@ -24,8 +24,17 @@ RUN /opt/coldfusion/config/cfsetup/cfsetup.sh alias instance /opt/coldfusion/cfu
 RUN /opt/coldfusion/config/cfsetup/cfsetup.sh add mapping virtual=/javaloader physical=/opt/coldfusion/cfusion/wwwroot/javaloader/ instance
 RUN /opt/coldfusion/config/cfsetup/cfsetup.sh set debug enabled=true instance
 RUN /opt/coldfusion/config/cfsetup/cfsetup.sh set debug robust_enabled=true instance
-RUN /opt/coldfusion/config/cfsetup/cfsetup.sh set DEBUG iplist=172.17.0.1 instance
+RUN /opt/coldfusion/config/cfsetup/cfsetup.sh set debug iplist=172.17.0.1 instance
+RUN /opt/coldfusion/config/cfsetup/cfsetup.sh set caching redisCacheStoragePort=6379 instance
+RUN /opt/coldfusion/config/cfsetup/cfsetup.sh set caching redisCacheStorageHost=host.docker.internal instance
+RUN /opt/coldfusion/config/cfsetup/cfsetup.sh set runtime sessionStorage=REDIS instance
+RUN /opt/coldfusion/config/cfsetup/cfsetup.sh set runtime sessionStorageHost=host.docker.internal instance
+RUN /opt/coldfusion/config/cfsetup/cfsetup.sh set runtime sessionStoragePort=6379 instance
+RUN /opt/coldfusion/config/cfsetup/cfsetup.sh set runtime reuseRedisCachingForSessionStorage=true instance
+RUN /opt/coldfusion/config/cfsetup/cfsetup.sh set runtime sslSessionStorage=false instance
+RUN /opt/coldfusion/cfusion/bin/cfpm.sh install orm,debugger,mysql,redissessionstorage,zip
 RUN /opt/coldfusion/cfusion/bin/coldfusion restart
+RUN chmod 777 /opt/coldfusion/cfusion/lib/neo-runtime.bak
 COPY code/todo /app/todo
 COPY code/index.cfm /app/index.cfm
 ENV PORT 8500

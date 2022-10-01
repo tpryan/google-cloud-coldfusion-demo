@@ -52,7 +52,7 @@ component rest="true" restpass="api/todo"{
             }
         } 
 
-        restSetResponse({status=StatusOk});
+        restSetResponse({status=this.StatusOk});
         entitySave(local.todo);
         ormflush();
     }

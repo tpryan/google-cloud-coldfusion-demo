@@ -5,7 +5,7 @@ APPNAME=todo
 dev: build
 	docker run --name $(APPNAME) -dt -v $(BASEDIR)/code/todo:/app/todo -p 8500:8500 \
 	-v /Users/tpryan/.config/gcloud/:/creds -e GOOGLE_APPLICATION_CREDENTIALS=/creds/application_default_credentials.json \
-	-e installModules=orm,debugger,zip,mysql -e acceptEULA=YES -e password=ColdFusion123 \
+	-e installModules=orm,debugger,mysql,redissessionstorage -e acceptEULA=YES -e password=ColdFusion123 \
 	-e DB_USER=todo_user -e DB_PASS=todo_pass -e DB_HOST=host.docker.internal \
 	-e DB_NAME=todo -e DB_PORT=3306 \
 	$(APPNAME)
@@ -26,10 +26,18 @@ cleandb:
 	-docker stop todo-mysql
 	-docker rm todo-mysql
 
-all: db dev	
+all: db redis dev	
 
 services: 
 	gcloud services enable cloudbuild.googleapis.com -q 
 
 cloudbuild:
 	gcloud builds submit .
+
+
+redis: cleanredis
+	docker run --name todo-redis -p 6379:6379 -d redis	
+
+cleanredis:
+	-docker stop todo-redis
+	-docker rm todo-redis	

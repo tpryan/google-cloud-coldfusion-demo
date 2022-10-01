@@ -19,7 +19,7 @@
 resource "random_password" "password" {
   length           = 16
   special          = true
-  override_special = "!#$%*-_=+<>:?"
+  override_special = "!#$%*-_=+:?"
 }
 
 
@@ -88,6 +88,7 @@ variable "gcp_service_list" {
     "compute.googleapis.com",
     "servicenetworking.googleapis.com",
     "cloudbuild.googleapis.com",
+    "redis.googleapis.com",
   ]
 }
 
@@ -168,8 +169,16 @@ resource "google_sql_database_instance" "main" {
   }
 }
 
-
-
+resource "google_redis_instance" "main" {
+  name           = "${var.basename}-cache"
+  memory_size_gb = 1
+  authorized_network = google_compute_network.main.id
+  location_id             = var.zone
+  project                 = var.project_id
+  redis_version           = "REDIS_6_X"
+  region                  = var.region
+  depends_on  = [google_project_service.all]
+}
 
 resource "google_secret_manager_secret" "DB_USER" {
   project = data.google_project.project.number
@@ -310,7 +319,7 @@ resource "google_compute_instance" "main" {
 
   provisioner "local-exec" {
     working_dir = "../${path.module}/scripts"
-    command     = "./install.sh ${var.project_id} ${google_compute_instance.main.name}"
+    command     = "./install.sh ${var.project_id} ${google_compute_instance.main.name} ${google_redis_instance.main.host}"
   }
 
   depends_on = [google_project_service.all]

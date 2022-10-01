@@ -17,8 +17,13 @@ component {
     this.name = "todo";
     this.ormenabled = true;
     this.applicationTimeout = CreateTimeSpan(0,0,60,0);
+    this.sessionmanagement="Yes" 
+    this.sessiontimeout = CreateTimeSpan(0,0,45,0);
     this.datasource = "todo_datasource";
-    this.ormsettings ={datasource="todo_datasource", logsql="true"}
+    this.ormsettings ={
+            datasource="todo_datasource", 
+            logsql="true" 
+    }
     this.mappings["/javaloader"]="#server.coldfusion.rootdir#/wwwroot/javaloader";
 
 
@@ -47,6 +52,11 @@ component {
 
     function onApplicationStart() { 
         RestInitApplication(expandPath('./cfc/services'), "api")
+        return true; 
+    }
+
+    function onSessionStart() { 
+        session.started = Now();
         return true; 
     }
 
