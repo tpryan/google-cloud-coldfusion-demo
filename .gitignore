@@ -3,3 +3,5 @@
 .terraform*
 terraform.tfstate*
 terraform/terraform.tfvars
+scripts/silent.tmp
+scripts/silent.tmp-e

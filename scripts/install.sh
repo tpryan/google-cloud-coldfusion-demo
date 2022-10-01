@@ -15,11 +15,15 @@
 PROJECT=$1
 SERVERNAME=$2
 REDISHOST=$3
+PASSWORD=$4
 
 sleep 60
 
+cp silent.properties silent.tmp
+sed -i"" -e "s/Admin123!/$PASSWORD/" silent.tmp
+
 # Install ColdFusion
-gcloud compute scp --project=${PROJECT} silent.properties ${SERVERNAME}:~ 
+gcloud compute scp --project=${PROJECT} silent.tmp ${SERVERNAME}:~/silent.properties 
 gcloud compute ssh ${SERVERNAME} --project=${PROJECT} --command="curl -o installer https://download.macromedia.com/pub/coldfusion/updates/14/gui_installers/ColdFusion_2021_GUI_WWEJ_linux64.bin"
 gcloud compute ssh ${SERVERNAME} --project=${PROJECT} --command="chmod +x installer"
 gcloud compute ssh ${SERVERNAME} --project=${PROJECT} --command="sudo ./installer -f silent.properties "

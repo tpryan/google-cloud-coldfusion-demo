@@ -16,20 +16,28 @@
 
 
 
-resource "random_password" "password" {
+resource "random_password" "dbpassword" {
+  length           = 16
+  special          = true
+  override_special = "!#$%*-_=+:?"
+}
+
+resource "random_password" "cfpassword" {
   length           = 16
   special          = true
   override_special = "!#$%*-_=+:?"
 }
 
 
+
 locals {
   sacompute = "${data.google_project.project.number}-compute@developer.gserviceaccount.com"
   sabuild = "${data.google_project.project.number}@cloudbuild.gserviceaccount.com"
   DB_USER = "todo_user"
-  DB_PASS = random_password.password.result
+  DB_PASS = random_password.dbpassword.result
   DB_NAME = "todo"
   DB_PORT = "3306"
+  CF_PASS = random_password.cfpassword.result
 }
 
 
@@ -319,8 +327,20 @@ resource "google_compute_instance" "main" {
 
   provisioner "local-exec" {
     working_dir = "../${path.module}/scripts"
-    command     = "./install.sh ${var.project_id} ${google_compute_instance.main.name} ${google_redis_instance.main.host}"
+    command     = "./install.sh ${var.project_id} ${google_compute_instance.main.name} ${google_redis_instance.main.host} ${local.CF_PASS}"
   }
 
   depends_on = [google_project_service.all]
+}
+
+
+resource "null_resource" "publish" {
+  provisioner "local-exec" {
+    working_dir = "${path.module}/../"
+    command     = "gcloud builds submit ."
+  }
+
+  depends_on = [
+    google_compute_instance.main
+  ]
 }
