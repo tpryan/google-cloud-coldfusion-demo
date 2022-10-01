@@ -4,7 +4,7 @@ APPNAME=todo
 
 dev: build
 	docker run --name $(APPNAME) -dt -v $(BASEDIR)/code/todo:/app/todo -p 8500:8500 \
-	-v /Users/tpryan/.config/gcloud/:/creds -e GOOGLE_APPLICATION_CREDENTIALS=/creds/application_default_credentials.json \
+	-v ~/.config/gcloud/:/creds -e GOOGLE_APPLICATION_CREDENTIALS=/creds/application_default_credentials.json \
 	-e acceptEULA=YES -e password=ColdFusion123 \
 	-e DB_USER=todo_user -e DB_PASS=todo_pass -e DB_HOST=host.docker.internal \
 	-e DB_NAME=todo -e DB_PORT=3306 \
