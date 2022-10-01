@@ -17,6 +17,7 @@ SERVERNAME=$2
 REDISHOST=$3
 PASSWORD=$4
 
+# Wait for some time for VM to be ready. 
 sleep 60
 
 cp silent.properties silent.tmp
@@ -65,3 +66,7 @@ gcloud compute ssh ${SERVERNAME} --project=${PROJECT} --command="sudo /opt/ColdF
 
 # Restart ColdFusion server
 gcloud compute ssh ${SERVERNAME} --project=${PROJECT} --command="sudo /opt/ColdFusion2021/cfusion/bin/coldfusion restart"
+
+# clean up 
+rm silent.tmp
+rm silent.tmp-e
