@@ -10,9 +10,11 @@ Code for demo app for ColdFusion Summit 2022
 * `cd terraform`
 * `terraform init`
 * `terraform apply`
-* `cd ..`
-* `gcloud builds submit .` 
+* Enter the project id you created when prompted.
 
+## Development
+
+* `make all`
 
 
 
