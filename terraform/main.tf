@@ -32,12 +32,12 @@ resource "random_password" "cfpassword" {
 
 locals {
   sacompute = "${data.google_project.project.number}-compute@developer.gserviceaccount.com"
-  sabuild = "${data.google_project.project.number}@cloudbuild.gserviceaccount.com"
-  DB_USER = "todo_user"
-  DB_PASS = random_password.dbpassword.result
-  DB_NAME = "todo"
-  DB_PORT = "3306"
-  CF_PASS = random_password.cfpassword.result
+  sabuild   = "${data.google_project.project.number}@cloudbuild.gserviceaccount.com"
+  DB_USER   = "todo_user"
+  DB_PASS   = random_password.dbpassword.result
+  DB_NAME   = "todo"
+  DB_PORT   = "3306"
+  CF_PASS   = random_password.cfpassword.result
 }
 
 
@@ -119,7 +119,7 @@ resource "google_compute_network" "main" {
   name                    = "${var.basename}-private-network"
   auto_create_subnetworks = true
   project                 = var.project_id
-  depends_on = [google_project_service.all]
+  depends_on              = [google_project_service.all]
 }
 
 resource "google_compute_global_address" "main" {
@@ -178,14 +178,14 @@ resource "google_sql_database_instance" "main" {
 }
 
 resource "google_redis_instance" "main" {
-  name           = "${var.basename}-cache"
-  memory_size_gb = 1
+  name               = "${var.basename}-cache"
+  memory_size_gb     = 1
   authorized_network = google_compute_network.main.id
-  location_id             = var.zone
-  project                 = var.project_id
-  redis_version           = "REDIS_6_X"
-  region                  = var.region
-  depends_on  = [google_project_service.all]
+  location_id        = var.zone
+  project            = var.project_id
+  redis_version      = "REDIS_6_X"
+  region             = var.region
+  depends_on         = [google_project_service.all]
 }
 
 resource "google_secret_manager_secret" "DB_USER" {
@@ -274,7 +274,7 @@ resource "google_compute_firewall" "allow-coldfusion" {
   name          = "allow-coldfusion"
   network       = google_compute_network.main.name
   source_ranges = ["0.0.0.0/0"]
-  target_tags = ["cfusion"]
+  target_tags   = ["cfusion"]
 
   allow {
     protocol = "tcp"
