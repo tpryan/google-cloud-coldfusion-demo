@@ -11,6 +11,7 @@ Code for demo app for ColdFusion Summit 2022
 * `terraform init`
 * `terraform apply`
 * Enter the project id you created when prompted.
+* In the Coldfusion Administrator uncheck: `Disable access to internal ColdFusion Java components`
 
 ## Development
 
