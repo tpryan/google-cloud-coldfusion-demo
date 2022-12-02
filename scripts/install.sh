@@ -64,6 +64,9 @@ gcloud compute ssh ${SERVERNAME} --project=${PROJECT} --command="sudo /opt/ColdF
 # Update ColdFusion install
 gcloud compute ssh ${SERVERNAME} --project=${PROJECT} --command="sudo /opt/ColdFusion2021/cfusion/bin/cfpm.sh update all"
 
+# This doesn't seem to take, so try it again
+gcloud compute ssh ${SERVERNAME} --project=${PROJECT} --command="sudo /opt/ColdFusion2021/config/cfsetup/cfsetup.sh set runtime disablecfcomponentaccess=false instance"
+
 # Restart ColdFusion server
 gcloud compute ssh ${SERVERNAME} --project=${PROJECT} --command="sudo /opt/ColdFusion2021/cfusion/bin/coldfusion restart"
 

@@ -45,7 +45,7 @@ RUN /opt/coldfusion/config/cfsetup/cfsetup.sh set runtime sslSessionStorage=fals
 RUN /opt/coldfusion/cfusion/bin/cfpm.sh install orm,debugger,mysql,redissessionstorage,zip
 RUN /opt/coldfusion/cfusion/bin/coldfusion restart
 
-# Got a weird error that the neo-runtime.bak could be written, this fixes that. 
+# Got a weird error that the neo-runtime.bak couldn't be written, this fixes that. 
 RUN chmod 777 /opt/coldfusion/cfusion/lib/neo-runtime.bak
 
 # Copy code
