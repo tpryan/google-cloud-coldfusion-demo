@@ -337,7 +337,7 @@ resource "google_compute_instance" "main" {
 resource "null_resource" "publish" {
   provisioner "local-exec" {
     working_dir = "${path.module}/../"
-    command     = "gcloud builds submit ."
+    command     = "gcloud builds submit . --project=${var.project_id}"
   }
 
   depends_on = [
